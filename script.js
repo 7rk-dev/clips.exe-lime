@@ -7,8 +7,17 @@
   const loadLbl  = document.getElementById('bootLoadingLabel');
   if (!screen || !wordEl || !fillEl || !startBtn) return;
 
-  // Mot affiché. null = espace entre les deux mots.
-  const sequence = ['C','L','I','P','S', null, 'E','X','E'];
+  // Sélection Player 1 / Player 2 — au clic, on bascule l'état actif
+  const playerRows = document.querySelectorAll('.boot-player-row');
+  playerRows.forEach(row => {
+    row.addEventListener('click', () => {
+      playerRows.forEach(r => r.classList.remove('is-active'));
+      row.classList.add('is-active');
+    });
+  });
+
+  // Mot affiché : CLIPS.EXE
+  const sequence = ['C','L','I','P','S', '.', 'E','X','E'];
 
   const scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&!?';
   const letterDelay   = 150; // ms entre chaque lettre qui se "résout"
@@ -16,16 +25,10 @@
   const scrambleSpeed = 28;  // ms entre chaque tick de scramble
   const totalDuration = sequence.length * letterDelay + 300;
 
-  // Construction des spans (lettres masquées au départ, espace = simple gap)
+  // Construction des spans (lettres masquées au départ)
   const letterEls = sequence.map(ch => {
-    if (!ch) {
-      const space = document.createElement('span');
-      space.className = 'boot-space';
-      wordEl.appendChild(space);
-      return null;
-    }
     const span = document.createElement('span');
-    span.className = 'boot-letter';
+    span.className = 'boot-letter' + (ch === '.' ? ' boot-dot' : '');
     span.textContent = ch;
     wordEl.appendChild(span);
     return { el: span, finalChar: ch };
@@ -69,7 +72,8 @@
   function enterSite() {
     screen.classList.add('boot-hide');
     document.body.classList.remove('boot-active');
-    setTimeout(() => { screen.style.display = 'none'; }, 650);
+    document.body.classList.add('site-revealed');
+    setTimeout(() => { screen.style.display = 'none'; }, 600);
   }
 
   startBtn.addEventListener('click', enterSite);
