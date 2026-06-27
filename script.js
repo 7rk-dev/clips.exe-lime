@@ -25,30 +25,26 @@
   const scrambleSpeed = 28;  // ms entre chaque tick de scramble
   const totalDuration = sequence.length * letterDelay + 300;
 
-  // Construction des spans (lettres masquées au départ)
-  const letterEls = sequence.map(ch => {
-    const span = document.createElement('span');
-    span.className = 'boot-letter' + (ch === '.' ? ' boot-dot' : '');
-    span.textContent = ch;
-    wordEl.appendChild(span);
-    return { el: span, finalChar: ch };
-  });
-
   // Barre de chargement : se remplit en continu sur la même durée totale
   fillEl.style.transitionDuration = totalDuration + 'ms';
   requestAnimationFrame(() => { fillEl.style.width = '100%'; });
 
-  // Effet "décodage hacker" : quelques caractères aléatoires avant que la bonne lettre s'affiche
-  function resolveLetter(item) {
-    const { el, finalChar } = item;
-    el.classList.add('show');
+  // Crée la lettre suivante dans le DOM (le curseur ::after, toujours rendu après
+  // le dernier enfant, se retrouve donc automatiquement juste derrière elle) puis
+  // l'anime avec un effet de "décodage hacker" avant de se fixer sur le bon caractère.
+  function addLetter(ch) {
+    const span = document.createElement('span');
+    span.className = 'boot-letter' + (ch === '.' ? ' boot-dot' : '');
+    wordEl.appendChild(span);
+    requestAnimationFrame(() => { span.classList.add('show'); });
+
     let tick = 0;
     const scramble = setInterval(() => {
-      el.textContent = scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+      span.textContent = scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
       tick++;
       if (tick >= scrambleTicks) {
         clearInterval(scramble);
-        el.textContent = finalChar;
+        span.textContent = ch;
       }
     }, scrambleSpeed);
   }
@@ -56,10 +52,10 @@
   // Révélation des lettres une à une
   let i = 0;
   const interval = setInterval(() => {
-    const item = letterEls[i];
-    if (item) resolveLetter(item);
+    if (i === 0) wordEl.classList.add('typing-started'); // le curseur n'apparaît qu'au moment de la 1ère lettre
+    addLetter(sequence[i]);
     i++;
-    if (i >= letterEls.length) {
+    if (i >= sequence.length) {
       clearInterval(interval);
       // Petit délai après la dernière lettre / fin de barre avant d'afficher START
       setTimeout(() => {

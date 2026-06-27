@@ -240,7 +240,7 @@
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
-  .cta:hover::after { animation-play-state: paused; opacity: 0; }
+  /* le survol n'a plus d'impact sur l'animation : elle continue son cycle pour rester synchro avec les autres boutons */
 
   /* cycle total = 5.4s = somme des 4 durées (1.0 + 1.7 + 1.6 + 1.1) */
   .cta-k::after { animation: cta-scan-k 5.4s linear infinite; animation-delay: 0s; }
@@ -1417,6 +1417,9 @@ body.boot-active {
   margin-bottom: 12px;
   background: var(--boot-neon);
   box-shadow: 0 0 10px var(--boot-neon-glow);
+  opacity: 0;
+}
+.boot-word.typing-started::after {
   animation: boot-cursor-blink 0.9s steps(1) infinite;
 }
 @keyframes boot-cursor-blink {
