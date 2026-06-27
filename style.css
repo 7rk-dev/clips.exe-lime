@@ -225,6 +225,58 @@
     box-shadow: 0 0 28px var(--kacky-glow);
   }
 
+  /* léger scan lumineux qui se relaie d'un bouton à l'autre, façon terminal.
+     Durée propre à chaque bouton (proportionnelle à sa largeur) pour que le
+     trait se déplace à VITESSE CONSTANTE (calée sur KACKY), et non à durée
+     constante — sinon il paraît plus lent sur les boutons larges. */
+  .cta::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0; left: -22%;
+    width: 24px;
+    background: linear-gradient(90deg, transparent, var(--kacky) 50%, transparent);
+    opacity: 0;
+    filter: blur(2px);
+    pointer-events: none;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  .cta:hover::after { animation-play-state: paused; opacity: 0; }
+
+  /* cycle total = 5.4s = somme des 4 durées (1.0 + 1.7 + 1.6 + 1.1) */
+  .cta-k::after { animation: cta-scan-k 5.4s linear infinite; animation-delay: 0s; }
+  .cta-r::after { animation: cta-scan-r 5.4s linear infinite; animation-delay: 1.0s; }
+  .cta-c::after { animation: cta-scan-c 5.4s linear infinite; animation-delay: 2.7s; }
+  .cta-x::after { animation: cta-scan-x 5.4s linear infinite; animation-delay: 4.3s; }
+
+  @keyframes cta-scan-k {
+    0%     { left: -22%; opacity: 0; }
+    1.9%   { opacity: 0.6; }
+    16.7%  { left: 104%;  opacity: 0.6; }
+    18.5%  { opacity: 0; }
+    100%   { opacity: 0; }
+  }
+  @keyframes cta-scan-r {
+    0%     { left: -22%; opacity: 0; }
+    3.1%   { opacity: 0.6; }
+    28.3%  { left: 104%;  opacity: 0.6; }
+    31.5%  { opacity: 0; }
+    100%   { opacity: 0; }
+  }
+  @keyframes cta-scan-c {
+    0%     { left: -22%; opacity: 0; }
+    3.0%   { opacity: 0.6; }
+    26.7%  { left: 104%;  opacity: 0.6; }
+    29.6%  { opacity: 0; }
+    100%   { opacity: 0; }
+  }
+  @keyframes cta-scan-x {
+    0%     { left: -22%; opacity: 0; }
+    2.0%   { opacity: 0.6; }
+    18.3%  { left: 104%;  opacity: 0.6; }
+    20.4%  { opacity: 0; }
+    100%   { opacity: 0; }
+  }
+
   .scroll-cue {
     position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
     display:flex;flex-direction:column;align-items:center;gap:14px;
